@@ -1,4 +1,4 @@
-package com.redes.server;
+package com.redes.servidor;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -25,25 +25,22 @@ public class GerenciarServidor implements Runnable {
             cliente.setNomeUsuario(cliente.getLeitor().readUTF());
             clientes.add(cliente);
             
+            enviarUsuariosConectados();
+            
             while(true) {
                 String msg = cliente.getLeitor().readUTF();
                 
                 if (msg.equalsIgnoreCase("cmd::online")) {
-                    
                     enviarUsuariosConectados();
-                    
                 } else if (msg.equalsIgnoreCase("cmd::sair")) {
-                    
+                    clientes.remove(cliente);
+                    enviarUsuariosConectados();
                     cliente.getCliente().close();
-                    
                 } else {
-                    
                     enviarMensagem(cliente, msg);
-                    
                 }
                 
             }
-            
          } catch (IOException erro) {
             System.err.println("A conexão com " + cliente.getNomeUsuario() + " foi fechada.");
             clientes.remove(cliente);
@@ -55,11 +52,14 @@ public class GerenciarServidor implements Runnable {
         
         clientes.forEach(item -> {
             str.append(item.getNomeUsuario());
-            str.append("\n -------------------- \n");
+            str.append(",");
         });
         
         try {
-            cliente.getEscritor().writeUTF(str.toString());
+            for (Cliente item : clientes) {
+                item.getEscritor().writeUTF("cmd::online");
+                item.getEscritor().writeUTF(str.toString());
+            }
         } catch (IOException erro) {
             System.err.println("Erro: " + erro.getMessage());
         }
@@ -69,7 +69,11 @@ public class GerenciarServidor implements Runnable {
     private void enviarMensagem(Cliente cliente, String msg) {
         clientes.forEach(item -> {
             try {
-                item.getEscritor().writeUTF(cliente.getNomeUsuario() + ": " + msg);
+                if (item == cliente) {
+                    item.getEscritor().writeUTF("Eu: " + msg);
+                } else {
+                    item.getEscritor().writeUTF(cliente.getNomeUsuario() + ": " + msg);
+                }
             } catch (IOException erro) {
                 System.err.println("Erro: " + erro.getMessage());
             }

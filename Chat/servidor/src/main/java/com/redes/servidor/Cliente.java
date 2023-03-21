@@ -1,4 +1,4 @@
-package com.redes.server;
+package com.redes.servidor;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

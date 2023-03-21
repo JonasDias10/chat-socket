@@ -1,6 +1,13 @@
 package com.redes.cliente;
 
+import java.awt.event.KeyEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -8,10 +15,68 @@ import java.io.IOException;
  */
 public class TelaChat extends javax.swing.JFrame {
     
-    public TelaChat() throws IOException {
+    private Socket cliente;
+    private DataInputStream leitor;
+    private DataOutputStream escritor;
+    private final DefaultListModel modelMensagens;
+    private final DefaultListModel modelUsuarios;
+    
+    public TelaChat() {
+        modelMensagens = new DefaultListModel();
+        modelUsuarios = new DefaultListModel();
         initComponents();
+        this.setLocationRelativeTo(null);
     }
-
+    
+    public void inicarChat() {
+        try {
+            cliente = new Socket(InetAddress.getByName("localhost"), 5050);
+            leitor = new DataInputStream(cliente.getInputStream());
+            escritor = new DataOutputStream(cliente.getOutputStream());
+            
+            String nome = JOptionPane.showInputDialog(null, leitor.readUTF(), 
+                    "Bem-vindo ao chat!", JOptionPane.INFORMATION_MESSAGE);
+            escritor.writeUTF(nome);
+            
+        } catch (IOException erro) {
+            JOptionPane.showMessageDialog(null, erro.getMessage(),
+                    "Erro ao iniciar chat.", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public void aguardarMensagens() {
+         while(true) {
+                try {
+                    String msg = leitor.readUTF();
+                    
+                    if (msg.equalsIgnoreCase("cmd::online")) {
+                        preencherUsuarios( leitor.readUTF());
+                    } else {
+                        preencherMensagens(msg);
+                    }                    
+                    
+                } catch (IOException erro) {
+                    JOptionPane.showMessageDialog(null, erro.getMessage(),
+                    "Erro ao ler mensagem.", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+    }
+    
+    private void preencherUsuarios(String usuarios) {
+        modelUsuarios.clear();
+        String[] usuariosOnline = usuarios.split(",");
+        
+        for (String nome : usuariosOnline) {
+            modelUsuarios.addElement(nome);
+        }
+        
+    }
+    
+    private void preencherMensagens(String msg) {
+        modelMensagens.addElement(msg);
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -28,12 +93,25 @@ public class TelaChat extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        lblMensagem.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblMensagem.setText("Mensagens");
 
+        lblOnline.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lblOnline.setText("Online");
 
+        lstUsuariosOnline.setForeground(new java.awt.Color(102, 255, 102));
+        lstUsuariosOnline.setModel(modelUsuarios);
         jScrollPane3.setViewportView(lstUsuariosOnline);
 
+        txtChat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtChatKeyPressed(evt);
+            }
+        });
+
+        btnDesconectar.setBackground(new java.awt.Color(255, 51, 51));
+        btnDesconectar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnDesconectar.setForeground(new java.awt.Color(0, 0, 0));
         btnDesconectar.setText("Desconectar");
         btnDesconectar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -41,6 +119,9 @@ public class TelaChat extends javax.swing.JFrame {
             }
         });
 
+        btnEnviar.setBackground(new java.awt.Color(102, 102, 255));
+        btnEnviar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnEnviar.setForeground(new java.awt.Color(0, 0, 0));
         btnEnviar.setText("Enviar");
         btnEnviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -48,6 +129,7 @@ public class TelaChat extends javax.swing.JFrame {
             }
         });
 
+        lstMensagens.setModel(modelMensagens);
         jScrollPane2.setViewportView(lstMensagens);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -71,8 +153,8 @@ public class TelaChat extends javax.swing.JFrame {
                                 .addComponent(lblOnline)
                                 .addGap(24, 24, 24))
                             .addComponent(btnEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(btnDesconectar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(39, Short.MAX_VALUE))
+                    .addComponent(btnDesconectar, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,12 +180,44 @@ public class TelaChat extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
-
+        if (txtChat.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Mensagem está vázia!",
+                    "Digite uma mensagem.", JOptionPane.ERROR_MESSAGE);
+                    return;
+        }
+        try {
+            escritor.writeUTF(txtChat.getText().trim());
+        } catch (IOException erro) {
+             JOptionPane.showMessageDialog(null, erro.getMessage(),
+                    "Erro ao enviar mensagem.", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
-
+        try {
+            escritor.writeUTF("cmd::sair");
+            System.exit(EXIT_ON_CLOSE);
+        } catch (IOException erro) {
+             JOptionPane.showMessageDialog(null, erro.getMessage(),
+                    "Erro ao sair do chat.", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnDesconectarActionPerformed
+
+    private void txtChatKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtChatKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (txtChat.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Mensagem está vázia!",
+                        "Digite uma mensagem.", JOptionPane.ERROR_MESSAGE);
+                        return;
+            }
+            try {
+                escritor.writeUTF(txtChat.getText().trim());
+            } catch (IOException erro) {
+                 JOptionPane.showMessageDialog(null, erro.getMessage(),
+                        "Erro ao enviar mensagem.", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_txtChatKeyPressed
 
     public static void main(String args[]) {
         try {
@@ -125,11 +239,7 @@ public class TelaChat extends javax.swing.JFrame {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new TelaChat().setVisible(true);
-                } catch (IOException erro) {
-                    System.out.println("Erro: " + erro.getMessage());
-                }
+                new TelaChat().setVisible(true);
             }
         });
     }
