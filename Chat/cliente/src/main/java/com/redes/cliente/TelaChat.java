@@ -111,7 +111,6 @@ public class TelaChat extends javax.swing.JFrame {
         btnEnviar.setForeground(new java.awt.Color(0, 0, 0));
         btnEnviar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/enviar-icon.png"))); // NOI18N
         btnEnviar.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        btnEnviar.setMinimumSize(new java.awt.Dimension(34, 34));
         btnEnviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEnviarActionPerformed(evt);

@@ -13,19 +13,21 @@ public class GerenciarServidor implements Runnable {
     
     private static final List<Cliente> clientes = new ArrayList<>();
     private final Cliente cliente;
+    private final ServidorTela servidorTela;
     
     public GerenciarServidor(Socket cliente) {
+        servidorTela = new ServidorTela();
         this.cliente = new Cliente(cliente);
     }
     
     @Override
     public void run() {
         try {
-            cliente.getEscritor().writeUTF("Entre com seu nome: ");
             cliente.setNomeUsuario(cliente.getLeitor().readUTF());
             clientes.add(cliente);
             
             enviarUsuariosConectados();
+            enviarMensagem(cliente, cliente.getNomeUsuario() + " entrou no chat.");
             
             while(true) {
                 String msg = cliente.getLeitor().readUTF();
@@ -34,16 +36,18 @@ public class GerenciarServidor implements Runnable {
                     enviarUsuariosConectados();
                 } else if (msg.equalsIgnoreCase("cmd::sair")) {
                     clientes.remove(cliente);
+                    enviarMensagem(cliente, cliente.getNomeUsuario() + " saiu do chat.");
                     enviarUsuariosConectados();
                     cliente.getCliente().close();
+                     servidorTela.mostar("A conexão com " + cliente.getNomeUsuario() + " foi fechada.");
                 } else {
                     enviarMensagem(cliente, msg);
                 }
                 
             }
          } catch (IOException erro) {
-            System.err.println("A conexão com " + cliente.getNomeUsuario() + " foi fechada.");
-            clientes.remove(cliente);
+             servidorTela.mostar("A conexão com " + cliente.getNomeUsuario() + " foi fechada.");
+             clientes.remove(cliente);
         }
     }    
     
