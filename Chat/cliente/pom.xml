@@ -18,6 +18,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <exec.mainClass>com.redes.cliente.App</exec.mainClass>
+        <exec.mainClass>com.redes.cliente.TelaConectar</exec.mainClass>
     </properties>
 </project>

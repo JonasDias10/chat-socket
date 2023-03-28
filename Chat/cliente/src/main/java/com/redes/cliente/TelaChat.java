@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -28,39 +27,44 @@ public class TelaChat extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
     
-    public void inicarChat() {
+    public boolean inicarChat(String endereco, int porta, String nome) {
         try {
-            cliente = new Socket(InetAddress.getByName("localhost"), 5050);
+            cliente = new Socket(endereco, porta);
             leitor = new DataInputStream(cliente.getInputStream());
             escritor = new DataOutputStream(cliente.getOutputStream());
-            
-            String nome = JOptionPane.showInputDialog(null, leitor.readUTF(), 
-                    "Bem-vindo ao chat!", JOptionPane.INFORMATION_MESSAGE);
+  
             escritor.writeUTF(nome);
             
         } catch (IOException erro) {
             JOptionPane.showMessageDialog(null, erro.getMessage(),
                     "Erro ao iniciar chat.", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
+        return true;
     }
     
     public void aguardarMensagens() {
-         while(true) {
-                try {
-                    String msg = leitor.readUTF();
-                    
-                    if (msg.equalsIgnoreCase("cmd::online")) {
-                        preencherUsuarios( leitor.readUTF());
-                    } else {
-                        preencherMensagens(msg);
-                    }                    
-                    
-                } catch (IOException erro) {
-                    JOptionPane.showMessageDialog(null, erro.getMessage(),
-                    "Erro ao ler mensagem.", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+        new Thread() {
+            @Override
+            public void run() {
+                while(true) {
+                       try {
+                           String msg = leitor.readUTF();
+
+                           if (msg.equalsIgnoreCase("cmd::online")) {
+                               preencherUsuarios( leitor.readUTF());
+                           } else {
+                               preencherMensagens(msg);
+                           }                    
+
+                       } catch (IOException erro) {
+                           JOptionPane.showMessageDialog(null, erro.getMessage(),
+                           "Erro ao ler mensagem.", JOptionPane.ERROR_MESSAGE);
+                           return;
+                       }
+                   }
             }
+        }.start();
     }
     
     private void preencherUsuarios(String usuarios) {
@@ -80,35 +84,54 @@ public class TelaChat extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        pnlContainer = new javax.swing.JPanel();
+        btnEnviar = new javax.swing.JButton();
         lblMensagem = new javax.swing.JLabel();
         lblOnline = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        scrScrollUsuarios = new javax.swing.JScrollPane();
         lstUsuariosOnline = new javax.swing.JList<>();
-        txtChat = new javax.swing.JTextField();
         btnDesconectar = new javax.swing.JButton();
-        btnEnviar = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        scrScrollMensagens = new javax.swing.JScrollPane();
         lstMensagens = new javax.swing.JList<>();
-        jLabel1 = new javax.swing.JLabel();
+        lblChatSocket = new javax.swing.JLabel();
+        txtChat = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(460, 500));
+        setPreferredSize(new java.awt.Dimension(460, 500));
+        setResizable(false);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        lblMensagem.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblMensagem.setText("Mensagens");
+        pnlContainer.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblOnline.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblOnline.setText("Online");
-
-        lstUsuariosOnline.setForeground(new java.awt.Color(102, 255, 102));
-        lstUsuariosOnline.setModel(modelUsuarios);
-        jScrollPane3.setViewportView(lstUsuariosOnline);
-
-        txtChat.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtChatKeyPressed(evt);
+        btnEnviar.setBackground(new java.awt.Color(255, 255, 255));
+        btnEnviar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnEnviar.setForeground(new java.awt.Color(0, 0, 0));
+        btnEnviar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/enviar-icon.png"))); // NOI18N
+        btnEnviar.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        btnEnviar.setMinimumSize(new java.awt.Dimension(34, 34));
+        btnEnviar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarActionPerformed(evt);
             }
         });
+        pnlContainer.add(btnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 360, 40, -1));
+
+        lblMensagem.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblMensagem.setText("Mensagens");
+        pnlContainer.add(lblMensagem, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, -1, -1));
+
+        lblOnline.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOnline.setText("Online");
+        pnlContainer.add(lblOnline, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 50, -1, -1));
+
+        lstUsuariosOnline.setForeground(new java.awt.Color(0, 153, 0));
+        lstUsuariosOnline.setModel(modelUsuarios);
+        scrScrollUsuarios.setViewportView(lstUsuariosOnline);
+
+        pnlContainer.add(scrScrollUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 70, 80, 271));
 
         btnDesconectar.setBackground(new java.awt.Color(255, 51, 51));
         btnDesconectar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -119,74 +142,34 @@ public class TelaChat extends javax.swing.JFrame {
                 btnDesconectarActionPerformed(evt);
             }
         });
+        pnlContainer.add(btnDesconectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 420, 118, 30));
 
-        btnEnviar.setBackground(new java.awt.Color(102, 102, 255));
-        btnEnviar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnEnviar.setForeground(new java.awt.Color(0, 0, 0));
-        btnEnviar.setText("Enviar");
-        btnEnviar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEnviarActionPerformed(evt);
+        lstMensagens.setForeground(new java.awt.Color(0, 0, 0));
+        lstMensagens.setModel(modelMensagens);
+        scrScrollMensagens.setViewportView(lstMensagens);
+
+        pnlContainer.add(scrScrollMensagens, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 272, 271));
+
+        lblChatSocket.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblChatSocket.setText("Chat Socket");
+        pnlContainer.add(lblChatSocket, new org.netbeans.lib.awtextra.AbsoluteConstraints(161, 6, -1, -1));
+
+        txtChat.setPreferredSize(new java.awt.Dimension(64, 32));
+        txtChat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtChatKeyPressed(evt);
             }
         });
+        pnlContainer.add(txtChat, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 360, 370, 40));
 
-        lstMensagens.setModel(modelMensagens);
-        jScrollPane2.setViewportView(lstMensagens);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Chat Socket");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(txtChat, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(lblMensagem))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
-                                        .addComponent(btnEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(lblOnline)
-                                        .addGap(23, 23, 23))))
-                            .addComponent(btnDesconectar, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(161, 161, 161)
-                        .addComponent(jLabel1)))
-                .addContainerGap(37, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(13, 13, 13)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblMensagem)
-                    .addComponent(lblOnline))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnEnviar, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                    .addComponent(txtChat))
-                .addGap(18, 18, 18)
-                .addComponent(btnDesconectar, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
-                .addGap(16, 16, 16))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 29;
+        gridBagConstraints.ipady = 13;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 7);
+        getContentPane().add(pnlContainer, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -261,13 +244,14 @@ public class TelaChat extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDesconectar;
     private javax.swing.JButton btnEnviar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblChatSocket;
     private javax.swing.JLabel lblMensagem;
     private javax.swing.JLabel lblOnline;
     private javax.swing.JList<String> lstMensagens;
     private javax.swing.JList<String> lstUsuariosOnline;
+    private javax.swing.JPanel pnlContainer;
+    private javax.swing.JScrollPane scrScrollMensagens;
+    private javax.swing.JScrollPane scrScrollUsuarios;
     private javax.swing.JTextField txtChat;
     // End of variables declaration//GEN-END:variables
 }
