@@ -7,6 +7,7 @@ package com.redes.servidor;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 /**
  *
@@ -17,18 +18,21 @@ public class ServidorTela extends javax.swing.JFrame {
     /**
      * Creates new form ServidorTela
      */
+    
+    private final DefaultListModel ListaPortas;
+    
     public ServidorTela() {
+        ListaPortas = new DefaultListModel();
         initComponents();
     }
 
-    public void servidor(String[] args) {
+    public void servidor(int porta) {
         try {
-            ServerSocket servidor = new ServerSocket(5050);
+            ServerSocket servidor = new ServerSocket(porta);
             
             while(true) {
                 Socket cliente = servidor.accept();
-                System.out.println("Cliente: " + cliente.getRemoteSocketAddress());
-                
+                ListaPortas.addElement("Cliente: " + cliente.getRemoteSocketAddress());
                 new Thread(new GerenciarServidor(cliente)).start();
             }            
 
@@ -54,8 +58,20 @@ public class ServidorTela extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        btnPorta.setText("Acessar");
+        txtPorta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPortaActionPerformed(evt);
+            }
+        });
 
+        btnPorta.setText("Acessar");
+        btnPorta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPortaActionPerformed(evt);
+            }
+        });
+
+        lstPotas.setModel(ListaPortas);
         jScrollPane1.setViewportView(lstPotas);
 
         lblPorta.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -95,6 +111,15 @@ public class ServidorTela extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtPortaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPortaActionPerformed
+
+    }//GEN-LAST:event_txtPortaActionPerformed
+
+    private void btnPortaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPortaActionPerformed
+        int portinha = Integer.parseInt(txtPorta.getText().trim());
+        servidor(portinha);
+    }//GEN-LAST:event_btnPortaActionPerformed
 
     /**
      * @param args the command line arguments
