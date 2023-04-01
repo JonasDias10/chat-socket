@@ -19,7 +19,7 @@ public class TelaConectar extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         pnlContainer = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblBemVindo = new javax.swing.JLabel();
         txtEndereco = new javax.swing.JTextField();
         txtPorta = new javax.swing.JTextField();
         txtNome = new javax.swing.JTextField();
@@ -31,85 +31,75 @@ public class TelaConectar extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(460, 500));
         setMinimumSize(new java.awt.Dimension(460, 500));
-        setPreferredSize(new java.awt.Dimension(460, 500));
+        setName("Conectar no Chat"); // NOI18N
         setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("Bem-vindo(a) ao Chat Socket");
+        pnlContainer.setBackground(new java.awt.Color(141, 181, 247));
+        pnlContainer.setToolTipText("");
+        pnlContainer.setMaximumSize(new java.awt.Dimension(460, 500));
+        pnlContainer.setMinimumSize(new java.awt.Dimension(460, 500));
+        pnlContainer.setPreferredSize(new java.awt.Dimension(460, 500));
+        pnlContainer.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        lblBemVindo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblBemVindo.setForeground(new java.awt.Color(0, 0, 0));
+        lblBemVindo.setText("Bem-vindo(a) ao Chat Socket");
+        pnlContainer.add(lblBemVindo, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 20, -1, -1));
+
+        txtEndereco.setBackground(new java.awt.Color(255, 255, 255));
+        txtEndereco.setForeground(new java.awt.Color(0, 0, 0));
         txtEndereco.setText("localhost");
+        txtEndereco.setMaximumSize(new java.awt.Dimension(240, 40));
+        txtEndereco.setMinimumSize(new java.awt.Dimension(240, 40));
+        txtEndereco.setPreferredSize(new java.awt.Dimension(240, 40));
+        pnlContainer.add(txtEndereco, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 130, -1, -1));
+        txtEndereco.getAccessibleContext().setAccessibleName("");
+
+        txtPorta.setBackground(new java.awt.Color(255, 255, 255));
+        txtPorta.setForeground(new java.awt.Color(0, 0, 0));
+        txtPorta.setMaximumSize(new java.awt.Dimension(80, 40));
+        txtPorta.setMinimumSize(new java.awt.Dimension(80, 40));
+        txtPorta.setPreferredSize(new java.awt.Dimension(80, 40));
+        pnlContainer.add(txtPorta, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 200, -1, -1));
+
+        txtNome.setBackground(new java.awt.Color(255, 255, 255));
+        txtNome.setForeground(new java.awt.Color(0, 0, 0));
+        txtNome.setMaximumSize(new java.awt.Dimension(240, 40));
+        txtNome.setMinimumSize(new java.awt.Dimension(240, 40));
+        txtNome.setPreferredSize(new java.awt.Dimension(240, 40));
+        pnlContainer.add(txtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 270, -1, -1));
 
         lblEndereco.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblEndereco.setForeground(new java.awt.Color(0, 0, 0));
         lblEndereco.setText("Endereço do servidor:");
+        pnlContainer.add(lblEndereco, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 110, -1, -1));
 
         lblPorta.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblPorta.setForeground(new java.awt.Color(0, 0, 0));
         lblPorta.setText("Porta:");
+        pnlContainer.add(lblPorta, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 180, -1, -1));
 
         lblNome.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNome.setForeground(new java.awt.Color(0, 0, 0));
         lblNome.setText("Nome do usuário:");
+        pnlContainer.add(lblNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 250, -1, -1));
 
         btnConectar.setBackground(new java.awt.Color(102, 102, 255));
         btnConectar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnConectar.setForeground(new java.awt.Color(255, 255, 255));
         btnConectar.setText("Conectar");
+        btnConectar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
         btnConectar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConectarActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout pnlContainerLayout = new javax.swing.GroupLayout(pnlContainer);
-        pnlContainer.setLayout(pnlContainerLayout);
-        pnlContainerLayout.setHorizontalGroup(
-            pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlContainerLayout.createSequentialGroup()
-                .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlContainerLayout.createSequentialGroup()
-                        .addGap(95, 95, 95)
-                        .addComponent(jLabel1))
-                    .addGroup(pnlContainerLayout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblNome)
-                            .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(lblEndereco)
-                                .addComponent(txtEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                                .addComponent(txtPorta)
-                                .addComponent(lblPorta, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtNome))))
-                    .addGroup(pnlContainerLayout.createSequentialGroup()
-                        .addGap(91, 91, 91)
-                        .addComponent(btnConectar, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(55, Short.MAX_VALUE))
-        );
-        pnlContainerLayout.setVerticalGroup(
-            pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlContainerLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(jLabel1)
-                .addGap(33, 33, 33)
-                .addComponent(lblEndereco)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lblPorta)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtPorta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lblNome)
-                .addGap(4, 4, 4)
-                .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(btnConectar, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(33, Short.MAX_VALUE))
-        );
+        pnlContainer.add(btnConectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 410, 193, 46));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 49;
-        gridBagConstraints.ipady = 102;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         getContentPane().add(pnlContainer, gridBagConstraints);
 
@@ -177,7 +167,7 @@ public class TelaConectar extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConectar;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lblBemVindo;
     private javax.swing.JLabel lblEndereco;
     private javax.swing.JLabel lblNome;
     private javax.swing.JLabel lblPorta;

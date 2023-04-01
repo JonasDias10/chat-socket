@@ -87,50 +87,50 @@ public class TelaChat extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         pnlContainer = new javax.swing.JPanel();
+        scrScrollUsuarios = new javax.swing.JScrollPane();
+        lstUsuariosOnline = new javax.swing.JList<>();
+        scrScrollMensagens = new javax.swing.JScrollPane();
+        lstMensagens = new javax.swing.JList<>();
+        btnDesconectar = new javax.swing.JButton();
         btnEnviar = new javax.swing.JButton();
         lblMensagem = new javax.swing.JLabel();
         lblOnline = new javax.swing.JLabel();
-        scrScrollUsuarios = new javax.swing.JScrollPane();
-        lstUsuariosOnline = new javax.swing.JList<>();
-        btnDesconectar = new javax.swing.JButton();
-        scrScrollMensagens = new javax.swing.JScrollPane();
-        lstMensagens = new javax.swing.JList<>();
         lblChatSocket = new javax.swing.JLabel();
         txtChat = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Chat Socket");
+        setMaximumSize(new java.awt.Dimension(460, 500));
         setMinimumSize(new java.awt.Dimension(460, 500));
-        setPreferredSize(new java.awt.Dimension(460, 500));
         setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        pnlContainer.setBackground(new java.awt.Color(141, 181, 247));
+        pnlContainer.setMaximumSize(new java.awt.Dimension(460, 500));
+        pnlContainer.setMinimumSize(new java.awt.Dimension(460, 500));
+        pnlContainer.setPreferredSize(new java.awt.Dimension(460, 500));
         pnlContainer.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        btnEnviar.setBackground(new java.awt.Color(255, 255, 255));
-        btnEnviar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnEnviar.setForeground(new java.awt.Color(0, 0, 0));
-        btnEnviar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/enviar-icon.png"))); // NOI18N
-        btnEnviar.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        btnEnviar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEnviarActionPerformed(evt);
-            }
-        });
-        pnlContainer.add(btnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 360, 40, -1));
+        scrScrollUsuarios.setBackground(new java.awt.Color(255, 255, 255));
+        scrScrollUsuarios.setForeground(new java.awt.Color(0, 153, 0));
 
-        lblMensagem.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblMensagem.setText("Mensagens");
-        pnlContainer.add(lblMensagem, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, -1, -1));
-
-        lblOnline.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblOnline.setText("Online");
-        pnlContainer.add(lblOnline, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 50, -1, -1));
-
+        lstUsuariosOnline.setBackground(new java.awt.Color(255, 255, 255));
+        lstUsuariosOnline.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        lstUsuariosOnline.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lstUsuariosOnline.setForeground(new java.awt.Color(0, 153, 0));
         lstUsuariosOnline.setModel(modelUsuarios);
         scrScrollUsuarios.setViewportView(lstUsuariosOnline);
 
         pnlContainer.add(scrScrollUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 70, 80, 271));
+
+        lstMensagens.setBackground(new java.awt.Color(255, 255, 255));
+        lstMensagens.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        lstMensagens.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lstMensagens.setForeground(new java.awt.Color(0, 0, 0));
+        lstMensagens.setModel(modelMensagens);
+        scrScrollMensagens.setViewportView(lstMensagens);
+
+        pnlContainer.add(scrScrollMensagens, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 272, 271));
 
         btnDesconectar.setBackground(new java.awt.Color(255, 51, 51));
         btnDesconectar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -141,18 +141,39 @@ public class TelaChat extends javax.swing.JFrame {
                 btnDesconectarActionPerformed(evt);
             }
         });
-        pnlContainer.add(btnDesconectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 420, 118, 30));
+        pnlContainer.add(btnDesconectar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 420, 118, 40));
 
-        lstMensagens.setForeground(new java.awt.Color(0, 0, 0));
-        lstMensagens.setModel(modelMensagens);
-        scrScrollMensagens.setViewportView(lstMensagens);
+        btnEnviar.setBackground(new java.awt.Color(255, 255, 255));
+        btnEnviar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnEnviar.setForeground(new java.awt.Color(0, 0, 0));
+        btnEnviar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/enviar-icon.png"))); // NOI18N
+        btnEnviar.setBorder(null);
+        btnEnviar.setBorderPainted(false);
+        btnEnviar.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        btnEnviar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarActionPerformed(evt);
+            }
+        });
+        pnlContainer.add(btnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 360, 40, 40));
 
-        pnlContainer.add(scrScrollMensagens, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 272, 271));
+        lblMensagem.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblMensagem.setForeground(new java.awt.Color(0, 0, 0));
+        lblMensagem.setText("Mensagens");
+        pnlContainer.add(lblMensagem, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, -1, -1));
+
+        lblOnline.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblOnline.setForeground(new java.awt.Color(0, 0, 0));
+        lblOnline.setText("Online");
+        pnlContainer.add(lblOnline, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 50, -1, -1));
 
         lblChatSocket.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblChatSocket.setForeground(new java.awt.Color(0, 0, 0));
         lblChatSocket.setText("Chat Socket");
         pnlContainer.add(lblChatSocket, new org.netbeans.lib.awtextra.AbsoluteConstraints(161, 6, -1, -1));
 
+        txtChat.setBackground(new java.awt.Color(255, 255, 255));
+        txtChat.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
         txtChat.setPreferredSize(new java.awt.Dimension(64, 32));
         txtChat.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -164,10 +185,7 @@ public class TelaChat extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 29;
-        gridBagConstraints.ipady = 13;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 7);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
         getContentPane().add(pnlContainer, gridBagConstraints);
 
         pack();

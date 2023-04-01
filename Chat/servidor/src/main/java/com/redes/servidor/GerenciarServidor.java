@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultListModel;
 
 /**
  *
@@ -11,13 +12,13 @@ import java.util.List;
  */
 public class GerenciarServidor implements Runnable {
     
-    private static final List<Cliente> clientes = new ArrayList<>();
+    private static List<Cliente> clientes = new ArrayList<>();
     private final Cliente cliente;
-    private final ServidorTela servidorTela;
+    private final DefaultListModel modelMensagens;
     
-    public GerenciarServidor(Socket cliente) {
-        servidorTela = new ServidorTela();
+    public GerenciarServidor(Socket cliente, DefaultListModel modelMensagens) {
         this.cliente = new Cliente(cliente);
+        this.modelMensagens = modelMensagens;
     }
     
     @Override
@@ -26,28 +27,26 @@ public class GerenciarServidor implements Runnable {
             cliente.setNomeUsuario(cliente.getLeitor().readUTF());
             clientes.add(cliente);
             
+            modelMensagens.addElement(cliente.getNomeUsuario() + 
+                    " concectou ao servidor: " + cliente.getClienteSocket().getRemoteSocketAddress());
+                        
             enviarUsuariosConectados();
-            enviarMensagem(cliente, cliente.getNomeUsuario() + " entrou no chat.");
+            enviarEntradaSaida(cliente.getNomeUsuario() + " entrou no chat.");
             
             while(true) {
                 String msg = cliente.getLeitor().readUTF();
                 
-                if (msg.equalsIgnoreCase("cmd::online")) {
-                    enviarUsuariosConectados();
-                } else if (msg.equalsIgnoreCase("cmd::sair")) {
+                if (msg.equalsIgnoreCase("cmd::sair")) {
                     clientes.remove(cliente);
-                    enviarMensagem(cliente, cliente.getNomeUsuario() + " saiu do chat.");
+                    enviarEntradaSaida(cliente.getNomeUsuario() + " saiu do chat.");
                     enviarUsuariosConectados();
-                    cliente.getCliente().close();
-                     servidorTela.mostar("A conexão com " + cliente.getNomeUsuario() + " foi fechada.");
+                    cliente.getClienteSocket().close();
                 } else {
                     enviarMensagem(cliente, msg);
                 }
-                
             }
          } catch (IOException erro) {
-             servidorTela.mostar("A conexão com " + cliente.getNomeUsuario() + " foi fechada.");
-             clientes.remove(cliente);
+             modelMensagens.addElement("A conexão com " + cliente.getNomeUsuario() + " foi fechada.");
         }
     }    
     
@@ -70,6 +69,18 @@ public class GerenciarServidor implements Runnable {
         
     }
     
+    private void enviarEntradaSaida(String msg) {
+        clientes.forEach(item -> {
+            try {
+                if (item.getClienteSocket() != cliente.getClienteSocket()) {
+                    item.getEscritor().writeUTF(msg);
+                }
+            } catch (IOException erro) {
+                System.err.println("Erro: " + erro.getMessage());
+            }
+        });
+    }
+    
     private void enviarMensagem(Cliente cliente, String msg) {
         clientes.forEach(item -> {
             try {
@@ -82,6 +93,14 @@ public class GerenciarServidor implements Runnable {
                 System.err.println("Erro: " + erro.getMessage());
             }
         });
+    }
+
+    public static List<Cliente> getClientes() {
+        return clientes;
+    }
+
+    public static void setClientes(List<Cliente> clientes) {
+        GerenciarServidor.clientes = clientes;
     }
     
 }

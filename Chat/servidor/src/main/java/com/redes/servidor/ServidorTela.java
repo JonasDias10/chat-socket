@@ -11,34 +11,40 @@ import javax.swing.JOptionPane;
  */
 public class ServidorTela extends javax.swing.JFrame {
 
-    private final DefaultListModel listaPortas;
+    private final DefaultListModel modelMensagens;
+    private ServerSocket servidor;
     
     public ServidorTela() {
-        listaPortas = new DefaultListModel();
+        modelMensagens = new DefaultListModel();
         initComponents();
         this.setLocationRelativeTo(null);
     }
 
-    public void mostar(String msg) {
-        listaPortas.addElement(msg);
+    public void inicarServidor(int porta) {
+        try {
+            servidor = new ServerSocket(porta);
+            modelMensagens.addElement("Servidor iniciado na porta: " + porta);
+            aguardarConexoes();
+            btnIniciarServidor.setEnabled(false);
+        } catch (IOException erro) {
+            JOptionPane.showMessageDialog(null, erro.getMessage(), 
+                            "Erro ao iniciar o servidor.", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
     
-    public void servidor(int porta) {
+    public void aguardarConexoes() {
         new Thread() {
             @Override
             public void run() {
                 try {
-                    ServerSocket servidor = new ServerSocket(porta);
-
                     while(true) {
                         Socket cliente = servidor.accept();
-                        listaPortas.addElement("Cliente: " + cliente.getRemoteSocketAddress());
-                        new Thread(new GerenciarServidor(cliente)).start();
+                        
+                        new Thread(new GerenciarServidor(cliente, modelMensagens)).start();
                     }            
-
                 } catch (IOException erro) {
                     JOptionPane.showMessageDialog(null, erro.getMessage(), 
-                            "Erro ao iniciar o servidor:", JOptionPane.INFORMATION_MESSAGE);
+                            "Erro ao aceitar conexões.", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         }.start();  
@@ -49,64 +55,79 @@ public class ServidorTela extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        button1 = new java.awt.Button();
         pnlContainer = new javax.swing.JPanel();
         txtPorta = new javax.swing.JTextField();
-        btnPorta = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lstPotas = new javax.swing.JList<>();
+        btnIniciarServidor = new javax.swing.JButton();
+        scrMensagens = new javax.swing.JScrollPane();
+        lstMensagens = new javax.swing.JList<>();
         lblPorta = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        lblServidorSocket = new javax.swing.JLabel();
+
+        button1.setLabel("button1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(460, 500));
+        setTitle("Servidor Socket");
+        setMaximumSize(new java.awt.Dimension(460, 500));
+        setMinimumSize(new java.awt.Dimension(460, 500));
         setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        pnlContainer.setBackground(new java.awt.Color(148, 247, 186));
+        pnlContainer.setMaximumSize(new java.awt.Dimension(460, 500));
+        pnlContainer.setMinimumSize(new java.awt.Dimension(460, 500));
+        pnlContainer.setNextFocusableComponent(this);
         pnlContainer.setPreferredSize(new java.awt.Dimension(460, 500));
         pnlContainer.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        pnlContainer.add(txtPorta, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, 200, 30));
 
-        btnPorta.setBackground(new java.awt.Color(102, 102, 255));
-        btnPorta.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnPorta.setForeground(new java.awt.Color(255, 255, 255));
-        btnPorta.setText("Inciar Servidor");
-        btnPorta.addActionListener(new java.awt.event.ActionListener() {
+        txtPorta.setBackground(new java.awt.Color(255, 255, 255));
+        txtPorta.setForeground(new java.awt.Color(0, 0, 0));
+        pnlContainer.add(txtPorta, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 400, 100, 40));
+
+        btnIniciarServidor.setBackground(new java.awt.Color(102, 102, 255));
+        btnIniciarServidor.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnIniciarServidor.setForeground(new java.awt.Color(255, 255, 255));
+        btnIniciarServidor.setText("Inciar Servidor");
+        btnIniciarServidor.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
+        btnIniciarServidor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPortaActionPerformed(evt);
+                btnIniciarServidorActionPerformed(evt);
             }
         });
-        pnlContainer.add(btnPorta, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 300, -1, 30));
+        pnlContainer.add(btnIniciarServidor, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 400, 120, 40));
 
-        lstPotas.setModel(listaPortas);
-        jScrollPane1.setViewportView(lstPotas);
+        lstMensagens.setBackground(new java.awt.Color(255, 255, 255));
+        lstMensagens.setForeground(new java.awt.Color(0, 0, 0));
+        lstMensagens.setModel(modelMensagens);
+        scrMensagens.setViewportView(lstMensagens);
 
-        pnlContainer.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 370, 230));
+        pnlContainer.add(scrMensagens, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 380, 230));
 
         lblPorta.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblPorta.setForeground(new java.awt.Color(0, 0, 0));
         lblPorta.setText("Porta:");
-        pnlContainer.add(lblPorta, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, -1, -1));
+        pnlContainer.add(lblPorta, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 380, -1, -1));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Servidor Socket");
-        pnlContainer.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, -1, -1));
+        lblServidorSocket.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblServidorSocket.setForeground(new java.awt.Color(0, 0, 0));
+        lblServidorSocket.setText("Servidor Socket");
+        pnlContainer.add(lblServidorSocket, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, -1, -1));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.ipadx = 412;
-        gridBagConstraints.ipady = 342;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.RELATIVE;
+        gridBagConstraints.gridheight = java.awt.GridBagConstraints.RELATIVE;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         getContentPane().add(pnlContainer, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnPortaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPortaActionPerformed
-        int portinha = Integer.parseInt(txtPorta.getText().trim());
-        servidor(portinha);
-    }//GEN-LAST:event_btnPortaActionPerformed
+    private void btnIniciarServidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarServidorActionPerformed
+        int porta = Integer.parseInt(txtPorta.getText().trim());
+        inicarServidor(porta);
+    }//GEN-LAST:event_btnIniciarServidorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -144,12 +165,13 @@ public class ServidorTela extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnPorta;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton btnIniciarServidor;
+    private java.awt.Button button1;
     private javax.swing.JLabel lblPorta;
-    private javax.swing.JList<String> lstPotas;
+    private javax.swing.JLabel lblServidorSocket;
+    private javax.swing.JList<String> lstMensagens;
     private javax.swing.JPanel pnlContainer;
+    private javax.swing.JScrollPane scrMensagens;
     private javax.swing.JTextField txtPorta;
     // End of variables declaration//GEN-END:variables
 }

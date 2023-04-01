@@ -11,13 +11,13 @@ import java.net.Socket;
  */
 public class Cliente {
     
-    private Socket cliente;
+    private Socket clienteSocket;
     private String nomeUsuario;
     private DataInputStream leitor;
     private DataOutputStream escritor;
 
     public Cliente(Socket cliente) {
-        this.cliente = cliente;
+        this.clienteSocket = cliente;
         try {
             escritor = new DataOutputStream(cliente.getOutputStream());
             leitor = new DataInputStream(cliente.getInputStream());
@@ -26,12 +26,12 @@ public class Cliente {
         }
     }
 
-    public Socket getCliente() {
-        return cliente;
+    public Socket getClienteSocket() {
+        return clienteSocket;
     }
 
-    public void setCliente(Socket cliente) {
-        this.cliente = cliente;
+    public void setClienteSocket(Socket clienteSocket) {
+        this.clienteSocket = clienteSocket;
     }
     
     public String getNomeUsuario() {
